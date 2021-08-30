@@ -1,0 +1,21 @@
+{
+  "name": "task-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon src/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "mongodb": "^4.1.1",
+    "mongoose": "^6.0.2",
+    "nodemon": "^2.0.12",
+    "validator": "^13.6.0"
+  }
+}
