@@ -6,7 +6,8 @@ router.post('/users', async (req, res, next) => {
     const user = User(req.body)
     try {
         await user.save()
-        res.status(201).send(user)
+        const token = await user.generateAuthToken()
+        res.status(201).send({user,token})
     } catch (err) {
         const error = new Error(err)
         error.statusCode = 400
@@ -17,7 +18,11 @@ router.post('/users', async (req, res, next) => {
 router.post('/users/login', async (req, res, next) => {
     try {
         const user = await User.findByCredentials(req.body.email, req.body.password)
-        res.send(user)
+        const token = await user.generateAuthToken()
+        res.send({
+            user,
+            token
+        })
     } catch (err) {
         const error = new Error(err)
         error.statusCode = 400
