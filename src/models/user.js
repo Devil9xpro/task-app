@@ -45,7 +45,7 @@ const userSchema = new mongoose.Schema({
     tokens: [{
         token: {
             type: String,
-            required:true,
+            required: true,
         }
     }]
 })
@@ -78,9 +78,19 @@ userSchema.methods.generateAuthToken = async function () {
     const token = jwt.sign({
         _id: user._id.toString()
     }, process.env.JWT_PRIVATE_KEY)
-    user.tokens = user.tokens.concat({token})
+    user.tokens = user.tokens.concat({
+        token
+    })
     await user.save()
     return token
+}
+
+userSchema.methods.toJSON = function () {
+    const user = this
+    const userObject = user.toObject()
+    delete userObject.password
+    delete userObject.tokens
+    return userObject
 }
 
 const User = mongoose.model('User', userSchema)
