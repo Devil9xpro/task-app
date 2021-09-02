@@ -12,11 +12,13 @@ const auth = async (req, res, next) => {
             'tokens.token': token
         })
         if (!user) {
-            throw new Error()
+            throw new Error('Please authorize')
         }
+        req.token = token
         req.user = user
         next()
     } catch (err) {
+        console.log(err)
         const error = new Error(err)
         error.statusCode = 401
         return next(error)
