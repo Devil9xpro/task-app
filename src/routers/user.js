@@ -62,30 +62,7 @@ router.get('/users/me', auth, async (req, res, next) => {
     res.send(req.user)
 })
 
-router.get('/users/:id', async (req, res, next) => {
-    const _id = req.params.id
-    //check if _id is a valid ObjectId
-    if (!_id.match(/^[0-9a-fA-F]{24}$/)) {
-        return res.status(404).send("User's id is not exist !!")
-    }
-    try {
-        user = await User.findById(_id)
-        if (!user) {
-            return res.status(404).send('This user does not exist')
-        }
-        res.send(user)
-    } catch (err) {
-        const error = new Error(err)
-        error.statusCode = 500
-        return next(error)
-    }
-})
-
-router.patch('/users/:id', async (req, res) => {
-    const _id = req.params.id
-    if (!_id.match(/^[0-9a-fA-F]{24}$/)) {
-        return res.status(404).send("User's id is not exist !!")
-    }
+router.patch('/users/me', auth, async (req, res, next) => {
     const updates = Object.keys(req.body)
     const allowedUpdates = ['name', 'email', 'password', 'age']
     const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
@@ -95,31 +72,22 @@ router.patch('/users/:id', async (req, res) => {
         })
     }
     try {
-        const user = await User.findById(_id)
-        if (!user) {
-            return res.status(404).send()
-        }
-        updates.forEach((update) => user[update] = req.body[update])
-        await user.save()
-        res.send(user)
-    } catch (e) {
-        res.status(400).send(e)
+        updates.forEach((update) => req.user[update] = req.body[update])
+        await req.user.save()
+        res.send(req.user)
+    } catch (err) {
+        const error = new Error(err)
+        error.statusCode = 400
+        return next(error)
     }
 })
 
-router.delete('/users/:id', async (req, res) => {
-    const _id = req.params.id
-    if (!_id.match(/^[0-9a-fA-F]{24}$/)) {
-        return res.status(404).send("User's id is not exist !!")
-    }
+router.delete('/users/me', auth, async (req, res) => {
     try {
-        const user = await User.findByIdAndDelete(_id)
-        if (!user) {
-            return res.status(404).send()
-        }
-        res.send(user)
+        await req.user.remove()
+        res.send(req.user)
     } catch (e) {
-        res.status(500).send()
+        res.status(500).send
     }
 })
 
