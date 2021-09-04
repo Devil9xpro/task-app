@@ -21,7 +21,8 @@ router.post('/tasks', auth, async (req, res, next) => {
 router.get('/tasks', auth, async (req, res, next) => {
     try {
         const tasks = await Task.find({
-            owner: req.user._id
+            owner: req.user._id,
+            completed: req.query.completed
         })
         res.send(tasks)
     } catch (err) {
