@@ -20,10 +20,15 @@ router.post('/tasks', auth, async (req, res, next) => {
 
 router.get('/tasks', auth, async (req, res, next) => {
     try {
-        const tasks = await Task.find({
-            owner: req.user._id,
-            completed: req.query.completed
-        })
+        let tasks = []
+        if (req.query.completed) {
+            tasks = await Task.find({
+                owner: req.user._id,
+                completed: req.query.completed
+            })
+        }else{
+            tasks = await Task.find({owner: req.user._id})
+        }
         res.send(tasks)
     } catch (err) {
         const error = new Error(err)
