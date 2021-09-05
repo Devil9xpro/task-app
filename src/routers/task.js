@@ -21,14 +21,17 @@ router.post('/tasks', auth, async (req, res, next) => {
 
 //GET /tasks?completed=true
 //GET /tasks?limit=10&skip=0
+//GET /tasks?sortBy=createdAt:desc
 router.get('/tasks', auth, async (req, res, next) => {
     const match = {}
+    const sort = {}
     if (req.query.completed) {
         match.completed = req.query.completed === 'true'
     }
     const findOptions = {
-        limit: 1,
-        skip: 0
+        limit: 4,
+        skip: 0,
+        sort: sort
     }
     if (req.query.limit) {
         findOptions.limit = parseInt(req.query.limit)
@@ -36,13 +39,16 @@ router.get('/tasks', auth, async (req, res, next) => {
     if (req.query.skip) {
         findOptions.skip = parseInt(req.query.skip)
     }
+    if(req.query.sortBy) {
+        const parts = req.query.sortBy.split(':')
+        sort[parts[0]] = parts[1] === 'desc' ? -1 : 1
+    }
     console.log(findOptions)
     try {
         const tasks = await Task.find({
             owner: req.user._id,
             ...match
         }, null, findOptions)
-        console.log(tasks)
         res.send(tasks)
     } catch (err) {
         const error = new Error(err)
