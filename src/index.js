@@ -1,6 +1,7 @@
 const express = require('express')
 const chalk = require('chalk')
 const dotenv = require('dotenv').config()
+const multer = require('multer')
 
 require('./db/mongoose')
 const userRouter = require('./routers/user')
